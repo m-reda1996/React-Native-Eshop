@@ -34,9 +34,12 @@ mongoose
 //Routers
 const proudctRouter = require("./routers/products")
 const categoriesRouter = require("./routers/categories")
+const usersRouter = require("./routers/users")
+
 
 app.use(`${api}/products`, proudctRouter)
 app.use(`${api}/categories`, categoriesRouter)
+app.use(`${api}/users`, usersRouter)
 
 //listen
 app.listen(3333)
