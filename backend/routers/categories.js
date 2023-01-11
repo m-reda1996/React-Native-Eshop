@@ -2,6 +2,8 @@ const { Category } = require("../models/category")
 const express = require("express")
 const router = express.Router()
 const mongoose = require("mongoose")
+const secret = process.env.SECRET
+var { expressjwt: jwt } = require("express-jwt");
 
 // get all category
 router.get("/", async (req, res) => {
@@ -25,7 +27,7 @@ router.get("/:id", async (req, res) => {
 
 // update the category
 
-router.put("/:id", async (req, res) => {
+router.put("/:id",jwt({ secret, algorithms: ["HS256"] }), async (req, res) => {
   const { id } = req.params
   if (!mongoose.isValidObjectId(id)) return res.status(400).send("invalid category id ")
   const { name, icon, color } = req.body
@@ -36,7 +38,7 @@ router.put("/:id", async (req, res) => {
   res.send(category)
 })
 
-router.post("/", async (req, res) => {
+router.post("/",jwt({ secret, algorithms: ["HS256"] }), async (req, res) => {
   const { name, icon, color } = req.body
   let category = new Category({
     name,
@@ -48,7 +50,7 @@ router.post("/", async (req, res) => {
   if (!category) return res.status(404).send("the category cannot created ")
   res.send(category)
 })
-router.delete("/:id", (req, res) => {
+router.delete("/:id",jwt({ secret, algorithms: ["HS256"] }), (req, res) => {
   const { id } = req.params
   if (!mongoose.isValidObjectId(id)) return res.status(400).send("invalid category id ")
   const category = Category.findByIdAndDelete(id)

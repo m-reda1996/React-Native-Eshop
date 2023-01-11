@@ -3,6 +3,9 @@ const { Category } = require("../models/category")
 const router = express.Router()
 const { Product } = require("../models/product")
 const mongoose = require("mongoose")
+const secret = process.env.SECRET
+var { expressjwt: jwt } = require("express-jwt");
+
 
 router.get("/", async (req, res) => {
   let filter = {}
@@ -20,8 +23,9 @@ router.get("/:id", async (req, res) => {
   res.send(product)
 })
 
+
 //post request
-router.post("/", async (req, res) => {
+router.post("/",jwt({ secret, algorithms: ["HS256"] }), async (req, res) => {
   const productCategory = await Category.findById(req.body.category)
   if (!productCategory) return res.status(400).send("invalid category")
   const { name, discription, richDescription, image, images, brand, price, category, countInStock, rating, numReviews, isFeatured, dateCreated } = req.body
@@ -46,7 +50,7 @@ router.post("/", async (req, res) => {
   res.send(product)
 })
 
-router.put("/:id", async (req, res) => {
+router.put("/:id",jwt({ secret, algorithms: ["HS256"] }), async (req, res) => {
   const { id } = req.params
   if (!mongoose.isValidObjectId(id)) return res.status(400).send("invalid product id ")
   const productCategory = await Category.findById(req.body.category)
@@ -63,14 +67,14 @@ router.put("/:id", async (req, res) => {
   res.send(product)
 })
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",jwt({ secret, algorithms: ["HS256"] }), async (req, res) => {
   const { id } = req.params
   if (!mongoose.isValidObjectId(id)) return res.status(400).send("invalid product id ")
   const product = await Product.findByIdAndDelete(id)
   res.send("delted")
 })
 
-router.get("/get/count", async (req, res) => {
+router.get("/get/count",jwt({ secret, algorithms: ["HS256"] }), async (req, res) => {
   const productCount = await Product.countDocuments("name")
   if (!productCount) return res.status(500).json({ message: "the product with the given ID was not found" })
   res.send({
