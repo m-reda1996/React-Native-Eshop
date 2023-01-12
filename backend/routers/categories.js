@@ -27,7 +27,9 @@ router.get("/:id", async (req, res) => {
 
 // update the category
 
-router.put("/:id",jwt({ secret, algorithms: ["HS256"] }), async (req, res) => {
+// router.put("/:id",jwt({ secret, algorithms: ["HS256"] }), async (req, res) => {
+router.put("/:id", async (req, res) => {
+  
   const { id } = req.params
   if (!mongoose.isValidObjectId(id)) return res.status(400).send("invalid category id ")
   const { name, icon, color } = req.body
@@ -38,7 +40,8 @@ router.put("/:id",jwt({ secret, algorithms: ["HS256"] }), async (req, res) => {
   res.send(category)
 })
 
-router.post("/",jwt({ secret, algorithms: ["HS256"] }), async (req, res) => {
+// router.post("/",jwt({ secret, algorithms: ["HS256"] }), async (req, res) => {
+  router.post("/", async (req, res) => {
   const { name, icon, color } = req.body
   let category = new Category({
     name,
@@ -50,7 +53,9 @@ router.post("/",jwt({ secret, algorithms: ["HS256"] }), async (req, res) => {
   if (!category) return res.status(404).send("the category cannot created ")
   res.send(category)
 })
-router.delete("/:id",jwt({ secret, algorithms: ["HS256"] }), (req, res) => {
+// router.delete("/:id",jwt({ secret, algorithms: ["HS256"] }), (req, res) => {
+router.delete("/:id", (req, res) => {
+
   const { id } = req.params
   if (!mongoose.isValidObjectId(id)) return res.status(400).send("invalid category id ")
   const category = Category.findByIdAndDelete(id)
@@ -64,6 +69,15 @@ router.delete("/:id",jwt({ secret, algorithms: ["HS256"] }), (req, res) => {
     .catch((err) => {
       return res.status(400).json({ success: false, error: err })
     })
+})
+
+router.get("/get/count", async (req, res) => {
+
+  const categoryCount = await Category.countDocuments("name")
+  if (!categoryCount) return res.status(500).json({ message: "the product with the given ID was not found" })
+  res.send({
+    categoryCount: categoryCount,
+  })
 })
 
 module.exports = router
