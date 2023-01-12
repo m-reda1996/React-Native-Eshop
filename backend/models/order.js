@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-
+const orderItems = require("./order-item")
 const orderSchema = mongoose.Schema({
   orderItems: [
     {
@@ -46,5 +46,15 @@ orderSchema.virtual("id").get(function () {
 orderSchema.set("toJSON", {
   virtuals: true,
 })
+
+// orderSchema.post('findOneAndDelete' , async function (doc) {
+//   if (doc) {
+//     await orderItems.deleteMany({
+//       _id :{
+//         $in : doc.orderItems
+//       }
+//     })
+//   }
+// })
 
 exports.Order = mongoose.model("Order", orderSchema)
