@@ -24,20 +24,23 @@ app.use(morgan("tiny"))
 //   done();
 // }
 app.use(
-  jwt({ secret, algorithms: ["HS256"] ,isRevoked:isRevoked }).unless({
+  jwt({ secret, algorithms: ["HS256"], isRevoked: isRevoked }).unless({
     path: [
-      {url : /\/api\/v1\/products(.*)/ , method : ['GET' , 'OPTIONS']},
+      { url: /\/public\/uploads(.*)/, method: ["GET", "OPTIONS"] },
+      { url: /\/api\/v1\/products(.*)/, method: ["GET", "OPTIONS"] },
       { url: /\/api\/v1\/categories(.*)/, method: ["GET", "OPTIONS"] },
       `${api}/users/login`,
       `${api}/users/register`,
     ],
   })
 )
+app.use("/public/uploads", express.static(__dirname + "/public/uploads"))
+
 async function isRevoked(req, token) {
   if (token.payload.isAdmin == false) {
-    return true;
+    return true
   }
-  return false;
+  return false
 }
 app.use(errorHandler)
 
@@ -63,10 +66,10 @@ mongoose
 const proudctRouter = require("./routers/products")
 const categoriesRouter = require("./routers/categories")
 const usersRouter = require("./routers/users")
-const userOrder = require('./routers/orders')
+const userOrder = require("./routers/orders")
 app.use(`${api}/products`, proudctRouter)
 app.use(`${api}/categories`, categoriesRouter)
 app.use(`${api}/users`, usersRouter)
-app.use(`${api}/order` , userOrder)
+app.use(`${api}/order`, userOrder)
 //listen
 app.listen(3333)
